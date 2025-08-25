@@ -18,6 +18,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				inter: ['Inter', 'sans-serif'],
+				devanagari: ['Noto Sans Devanagari', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -26,7 +30,9 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					glow: 'hsl(var(--primary-glow))',
+					deep: 'hsl(var(--primary-deep))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -52,16 +58,17 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
-				}
+			},
+			backgroundImage: {
+				'gradient-saffron': 'var(--gradient-saffron)',
+				'gradient-sunset': 'var(--gradient-sunset)',
+				'gradient-divine': 'var(--gradient-divine)',
+				'gradient-sacred': 'var(--gradient-sacred)',
+			},
+			boxShadow: {
+				divine: 'var(--shadow-divine)',
+				sacred: 'var(--shadow-sacred)',
+				soft: 'var(--shadow-soft)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +91,44 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'divine-fade': {
+					from: {
+						opacity: '0',
+						transform: 'translateY(20px) scale(0.95)'
+					},
+					to: {
+						opacity: '1',
+						transform: 'translateY(0) scale(1)'
+					}
+				},
+				'sacred-slide': {
+					from: {
+						opacity: '0',
+						transform: 'translateX(-30px)'
+					},
+					to: {
+						opacity: '1',
+						transform: 'translateX(0)'
+					}
+				},
+				'om-pulse': {
+					'0%, 100%': {
+						transform: 'scale(1)',
+						opacity: '1'
+					},
+					'50%': {
+						transform: 'scale(1.05)',
+						opacity: '0.8'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'divine-fade': 'divine-fade 0.6s ease-out forwards',
+				'sacred-slide': 'sacred-slide 0.5s ease-out forwards',
+				'om-pulse': 'om-pulse 2s ease-in-out infinite'
 			}
 		}
 	},

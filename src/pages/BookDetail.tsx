@@ -1,0 +1,214 @@
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, BookOpen, Loader2, ExternalLink } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
+interface Book {
+  id: string;
+  title: string;
+  description: string;
+  author?: string;
+  language: string;
+  image_url?: string;
+  pdf_link?: string;
+  category: {
+    name: string;
+    description: string;
+  };
+}
+
+export default function BookDetail() {
+  const { id } = useParams<{ id: string }>();
+  const [book, setBook] = useState<Book | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      fetchBook(id);
+      // Add to recently viewed
+      addToRecentlyViewed(id);
+    }
+  }, [id]);
+
+  const fetchBook = async (bookId: string) => {
+    const { data, error } = await supabase
+      .from("books")
+      .select(`
+        id,
+        title,
+        description,
+        author,
+        language,
+        image_url,
+        pdf_link,
+        category:categories(name, description)
+      `)
+      .eq("id", bookId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching book:", error);
+    } else {
+      setBook(data);
+    }
+    setLoading(false);
+  };
+
+  const addToRecentlyViewed = (bookId: string) => {
+    const recentBooks = JSON.parse(localStorage.getItem("recentBooks") || "[]");
+    const updatedBooks = [bookId, ...recentBooks.filter((id: string) => id !== bookId)].slice(0, 10);
+    localStorage.setItem("recentBooks", JSON.stringify(updatedBooks));
+  };
+
+  const handleReadBook = () => {
+    if (book?.pdf_link) {
+      window.open(book.pdf_link, "_blank");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 flex justify-center items-center h-96">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!book) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 text-center">
+          <h1 className="text-2xl font-bold mb-4">Book not found</h1>
+          <Link to="/books">
+            <Button className="btn-divine">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Books
+            </Button>
+          </Link>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      
+      <div className="container mx-auto px-4 py-8">
+        {/* Back Button */}
+        <Link to="/books" className="inline-flex items-center text-primary hover:underline mb-6">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Books
+        </Link>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Book Image */}
+          <div className="lg:col-span-1">
+            <Card className="card-divine">
+              <CardContent className="p-0">
+                <div className="aspect-[3/4] bg-gradient-saffron rounded-lg relative overflow-hidden">
+                  {book.image_url ? (
+                    <img
+                      src={book.image_url}
+                      alt={book.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <BookOpen className="h-24 w-24 text-white" />
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Read Button */}
+            <Button
+              onClick={handleReadBook}
+              disabled={!book.pdf_link}
+              className="btn-divine w-full mt-4 text-lg py-3"
+            >
+              <BookOpen className="mr-2 h-5 w-5" />
+              Read Book
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Book Details */}
+          <div className="lg:col-span-2">
+            <div className="space-y-6">
+              {/* Title and Category */}
+              <div>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <Badge variant="default" className="text-sm">
+                    {book.category?.name}
+                  </Badge>
+                  <Badge variant="outline" className="text-sm">
+                    {book.language}
+                  </Badge>
+                </div>
+                <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">
+                  {book.title}
+                </h1>
+                {book.author && (
+                  <p className="text-lg text-muted-foreground">
+                    by {book.author}
+                  </p>
+                )}
+              </div>
+
+              {/* Description */}
+              <div>
+                <h2 className="text-2xl font-semibold mb-3">About this Book</h2>
+                <p className="text-muted-foreground leading-relaxed text-lg">
+                  {book.description}
+                </p>
+              </div>
+
+              {/* Category Info */}
+              {book.category?.description && (
+                <div>
+                  <h2 className="text-2xl font-semibold mb-3">Category: {book.category.name}</h2>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {book.category.description}
+                  </p>
+                </div>
+              )}
+
+              {/* PDF Viewer */}
+              {book.pdf_link && (
+                <div>
+                  <h2 className="text-2xl font-semibold mb-3">Preview</h2>
+                  <Card className="card-divine">
+                    <CardContent className="p-4">
+                      <div className="aspect-[4/3] w-full">
+                        <iframe
+                          src={`${book.pdf_link}/preview`}
+                          className="w-full h-full rounded-lg border"
+                          title={`Preview of ${book.title}`}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  );
+}
