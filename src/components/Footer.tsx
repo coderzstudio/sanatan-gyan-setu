@@ -12,7 +12,7 @@ export default function Footer() {
             <div className="flex items-center space-x-3 mb-4">
               <div className="text-3xl font-devanagari text-primary">ॐ</div>
               <span className="text-xl font-semibold">
-                Sanatani Gyan Library
+                Sanatani Gyan
               </span>
             </div>
             <p className="text-muted-foreground mb-6 max-w-md">
@@ -83,7 +83,7 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="border-t mt-8 pt-8 text-center">
           <p className="text-muted-foreground">
-            © 2024 Sanatani Gyan Library. All rights reserved. | 
+            © 2025 Sanatani Gyan Library. All rights reserved. | 
             <span className="font-devanagari text-primary ml-2">सत्यमेव जयते</span>
           </p>
         </div>
