@@ -83,7 +83,7 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="border-t mt-8 pt-8 text-center">
           <p className="text-muted-foreground">
-            © 2025 Sanatani Gyan Library. All rights reserved. | 
+            © 2025 Sanatani Gyan. All rights reserved. | 
             <span className="font-devanagari text-primary ml-2">सत्यमेव जयते</span>
           </p>
         </div>
