@@ -12,7 +12,7 @@ export default function AboutUs() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
-            About Sanatani Gyan Library
+            About Sanatani Gyan
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Preserving ancient wisdom for modern seekers. Our mission is to make 
@@ -163,7 +163,7 @@ export default function AboutUs() {
                 <Mail className="h-8 w-8 text-primary mx-auto" />
                 <h3 className="font-semibold text-lg">Email Us</h3>
                 <p className="text-muted-foreground">
-                  contact@sanatanigyan.org
+                  sanatanigyann@gmail.com
                 </p>
               </div>
               
@@ -179,8 +179,8 @@ export default function AboutUs() {
                 <MapPin className="h-8 w-8 text-primary mx-auto" />
                 <h3 className="font-semibold text-lg">Visit Us</h3>
                 <p className="text-muted-foreground">
-                  Vedic Knowledge Center<br />
-                  New Delhi, India
+                  Sanatani Gyan<br />
+                  Surat, India
                 </p>
               </div>
             </div>
