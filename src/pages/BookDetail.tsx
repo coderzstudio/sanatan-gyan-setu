@@ -67,7 +67,26 @@ export default function BookDetail() {
 
   const handleReadBook = () => {
     if (book?.pdf_link) {
-      window.open(book.pdf_link, "_blank");
+      // Create a new window with PDF viewer
+      const pdfWindow = window.open('', '_blank');
+      if (pdfWindow) {
+        pdfWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>${book.title} - PDF Viewer</title>
+              <style>
+                body { margin: 0; padding: 0; background: #333; }
+                iframe { width: 100vw; height: 100vh; border: none; }
+              </style>
+            </head>
+            <body>
+              <iframe src="${book.pdf_link}" type="application/pdf"></iframe>
+            </body>
+          </html>
+        `);
+        pdfWindow.document.close();
+      }
     }
   };
 

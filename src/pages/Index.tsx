@@ -19,14 +19,23 @@ interface Book {
   };
 }
 
+interface Mantra {
+  id: string;
+  title: string;
+  deity: string;
+  category?: string;
+}
+
 export default function Index() {
   const [recentBooks, setRecentBooks] = useState<Book[]>([]);
   const [topBooks, setTopBooks] = useState<Book[]>([]);
+  const [topMantras, setTopMantras] = useState<Mantra[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchRecentBooks();
     fetchTopBooks();
+    fetchTopMantras();
   }, []);
 
   const fetchRecentBooks = async () => {
@@ -54,6 +63,18 @@ export default function Index() {
       setTopBooks(data);
     }
     setLoading(false);
+  };
+
+  const fetchTopMantras = async () => {
+    const { data } = await supabase
+      .from("mantras")
+      .select("id, title, deity, category")
+      .limit(8)
+      .order("created_at", { ascending: false });
+
+    if (data) {
+      setTopMantras(data);
+    }
   };
 
   const shareWebsite = () => {
@@ -86,20 +107,20 @@ export default function Index() {
               Recently Viewed
             </h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="flex overflow-x-auto pb-4 gap-3 scrollbar-hide">
             {recentBooks.map((book) => (
-              <Link key={book.id} to={`/book/${book.id}`}>
-                <Card className="card-divine hover:scale-105 transition-transform">
+              <Link key={book.id} to={`/book/${book.id}`} className="flex-none">
+                <Card className="card-divine hover:scale-105 transition-transform w-32 sm:w-36">
                   <CardContent className="p-3">
                     <div className="aspect-[3/4] bg-gradient-saffron rounded mb-2 flex items-center justify-center">
                       {book.image_url ? (
                         <img src={book.image_url} alt={book.title} className="w-full h-full object-cover rounded" />
                       ) : (
-                        <BookOpen className="h-8 w-8 text-white" />
+                        <BookOpen className="h-6 w-6 text-white" />
                       )}
                     </div>
-                    <h3 className="font-medium text-sm line-clamp-2 mb-1">{book.title}</h3>
-                    <Badge variant="outline" className="text-xs">{book.language}</Badge>
+                    <h3 className="font-medium text-xs line-clamp-2 mb-1 h-8">{book.title}</h3>
+                    <Badge variant="outline" className="text-xs w-full justify-center truncate">{book.language}</Badge>
                   </CardContent>
                 </Card>
               </Link>
@@ -108,30 +129,30 @@ export default function Index() {
         </section>
       )}
 
-      {/* Top Shastras */}
+      {/* Top Books */}
       <section className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-bold text-primary">Sacred Shastras</h2>
+          <h2 className="text-3xl font-bold text-primary">Popular Books</h2>
           <Link to="/books">
             <Button className="btn-sacred">View All</Button>
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="flex overflow-x-auto pb-4 gap-4 scrollbar-hide">
           {topBooks.slice(0, 10).map((book) => (
-            <Link key={book.id} to={`/book/${book.id}`}>
-              <Card className="card-divine h-full hover:scale-105 transition-transform">
+            <Link key={book.id} to={`/book/${book.id}`} className="flex-none">
+              <Card className="card-divine hover:scale-105 transition-transform w-40 sm:w-44">
                 <CardContent className="p-4">
                   <div className="aspect-[3/4] bg-gradient-saffron rounded mb-3 flex items-center justify-center">
                     {book.image_url ? (
                       <img src={book.image_url} alt={book.title} className="w-full h-full object-cover rounded" />
                     ) : (
-                      <BookOpen className="h-12 w-12 text-white" />
+                      <BookOpen className="h-10 w-10 text-white" />
                     )}
                   </div>
-                  <h3 className="font-semibold text-sm line-clamp-2 mb-2">{book.title}</h3>
-                  <div className="flex justify-between text-xs">
-                    <Badge variant="secondary">{book.category?.name}</Badge>
-                    <Badge variant="outline">{book.language}</Badge>
+                  <h3 className="font-semibold text-sm line-clamp-2 mb-2 h-10">{book.title}</h3>
+                  <div className="space-y-1">
+                    <Badge variant="secondary" className="w-full justify-center text-xs truncate">{book.category?.name}</Badge>
+                    <Badge variant="outline" className="w-full justify-center text-xs">{book.language}</Badge>
                   </div>
                 </CardContent>
               </Card>
@@ -139,6 +160,41 @@ export default function Index() {
           ))}
         </div>
       </section>
+
+      {/* Popular Mantras */}
+      {topMantras.length > 0 && (
+        <section className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold text-primary">Popular Mantras</h2>
+            <Link to="/mantras">
+              <Button className="btn-sacred">View All</Button>
+            </Link>
+          </div>
+          <div className="flex overflow-x-auto pb-4 gap-4 scrollbar-hide">
+            {topMantras.map((mantra) => (
+              <Link key={mantra.id} to={`/mantra/${mantra.id}`} className="flex-none">
+                <Card className="card-divine hover:scale-105 transition-transform w-48 sm:w-52">
+                  <CardContent className="p-4">
+                    <div className="aspect-[4/3] bg-gradient-divine rounded mb-3 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-3xl font-devanagari text-primary mb-2">ॐ</div>
+                        <div className="text-lg font-medium text-primary">{mantra.deity}</div>
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-sm line-clamp-2 mb-2 h-10">{mantra.title}</h3>
+                    <div className="space-y-1">
+                      <Badge variant="secondary" className="w-full justify-center text-xs">{mantra.deity}</Badge>
+                      {mantra.category && (
+                        <Badge variant="outline" className="w-full justify-center text-xs truncate">{mantra.category}</Badge>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Info Cards */}
       <section className="container mx-auto px-4 py-8">
@@ -181,15 +237,15 @@ export default function Index() {
           <CardContent className="p-8 text-center">
             <h3 className="text-2xl font-bold text-primary mb-4">Welcome to Sanatani Gyan Library</h3>
             <p className="text-muted-foreground leading-relaxed max-w-4xl mx-auto mb-6">
-              Your digital gateway to the vast ocean of Vedic knowledge and Sanatani wisdom. 
-              Discover authentic scriptures, sacred mantras, and spiritual practices that have 
-              guided humanity for millennia. From the Vedas to the Puranas, from the Bhagavad 
-              Gita to the Upanishads - explore timeless teachings that illuminate the path to 
-              self-realization and divine consciousness.
+              Your digital gateway to Vedic knowledge and spiritual wisdom. 
+              Discover authentic scriptures, mantras, and spiritual practices that have 
+              guided humanity for thousands of years. From the Vedas to the Puranas, from the Bhagavad 
+              Gita to the Upanishads - explore timeless teachings that show the path to 
+              self-realization and spiritual growth.
             </p>
             <Button onClick={shareWebsite} className="btn-divine mr-4">
               <Share2 className="mr-2 h-4 w-4" />
-              Share This Library
+              Share Library
             </Button>
             <Link to="/books">
               <Button className="btn-sacred">

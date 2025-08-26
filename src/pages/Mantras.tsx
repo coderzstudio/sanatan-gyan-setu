@@ -3,10 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { Loader2, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SearchBar from "@/components/SearchBar";
 
 interface Mantra {
   id: string;
@@ -29,34 +30,58 @@ const deityCategories = [
 ];
 
 export default function Mantras() {
-  const [mantras, setMantras] = useState<Mantra[]>([]);
+  const [allMantras, setAllMantras] = useState<Mantra[]>([]);
+  const [filteredMantras, setFilteredMantras] = useState<Mantra[]>([]);
   const [selectedDeity, setSelectedDeity] = useState<string>("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchMantras();
-  }, [selectedDeity]);
+  }, []);
+
+  useEffect(() => {
+    filterMantras();
+  }, [allMantras, selectedDeity, searchQuery]);
 
   const fetchMantras = async () => {
     setLoading(true);
     
-    let query = supabase
+    const { data, error } = await supabase
       .from("mantras")
       .select("*")
-      .order("title");
-
-    if (selectedDeity !== "All") {
-      query = query.eq("deity", selectedDeity);
-    }
-
-    const { data, error } = await query;
-
+      .order("created_at", { ascending: false });
+    
     if (error) {
       console.error("Error fetching mantras:", error);
     } else {
-      setMantras(data || []);
+      setAllMantras(data || []);
     }
+    
     setLoading(false);
+  };
+
+  const filterMantras = () => {
+    let filtered = allMantras;
+
+    // Filter by deity
+    if (selectedDeity !== "All") {
+      filtered = filtered.filter(mantra => mantra.deity === selectedDeity);
+    }
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(mantra => 
+        mantra.title.toLowerCase().includes(query) ||
+        mantra.deity.toLowerCase().includes(query) ||
+        mantra.mantra_text.toLowerCase().includes(query) ||
+        mantra.meaning?.toLowerCase().includes(query) ||
+        mantra.category?.toLowerCase().includes(query)
+      );
+    }
+
+    setFilteredMantras(filtered);
   };
 
   return (
@@ -65,15 +90,18 @@ export default function Mantras() {
       
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
-            Sacred Mantras
+            Mantras
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover the power of divine sound through our collection of sacred mantras. 
-            Each mantra carries the essence of spiritual transformation and inner peace.
-          </p>
         </div>
+
+        {/* Search Bar */}
+        <SearchBar 
+          onSearch={setSearchQuery}
+          placeholder="Search mantras, deities, or meanings..."
+          className="mb-8"
+        />
 
         {/* Deity Filter */}
         <div className="flex flex-wrap gap-2 justify-center mb-8">
@@ -95,58 +123,60 @@ export default function Mantras() {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mantras.map((mantra) => (
-              <Link key={mantra.id} to={`/mantra/${mantra.id}`}>
-                <Card className="card-divine h-full hover:scale-105 transition-transform">
-                  <CardContent className="p-6">
-                    <div className="text-center space-y-4">
-                      {/* Deity Badge */}
-                      <Badge variant="default" className="mb-2">
-                        {mantra.deity}
-                      </Badge>
-                      
-                      {/* Title */}
-                      <h3 className="font-semibold text-xl text-primary">
-                        {mantra.title}
-                      </h3>
-                      
-                      {/* Mantra Text (truncated) */}
-                      <div className="font-devanagari text-lg text-center text-primary-deep leading-relaxed">
-                        {mantra.mantra_text.length > 50 
-                          ? `${mantra.mantra_text.substring(0, 50)}...`
-                          : mantra.mantra_text
-                        }
-                      </div>
-                      
-                      {/* Meaning (truncated) */}
-                      <p className="text-muted-foreground text-sm italic">
-                        {mantra.meaning && mantra.meaning.length > 80 
-                          ? `${mantra.meaning.substring(0, 80)}...`
-                          : mantra.meaning
-                        }
-                      </p>
-                      
-                      {/* View Details Button */}
-                      <Button variant="outline" className="mt-4">
-                        View Details
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {mantras.length === 0 && !loading && (
-          <div className="text-center py-12">
-            <div className="text-4xl font-devanagari text-primary mb-4">ॐ</div>
-            <h3 className="text-xl font-semibold mb-2">No mantras found</h3>
-            <p className="text-muted-foreground">
-              Try selecting a different deity or check back later.
-            </p>
-          </div>
+          <>
+            {filteredMantras.length === 0 ? (
+              <div className="text-center py-12">
+                <Heart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">No mantras found</h3>
+                <p className="text-muted-foreground">
+                  Try searching with different keywords or selecting a different deity.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <p className="text-muted-foreground text-center">
+                    Showing {filteredMantras.length} mantras
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredMantras.map((mantra) => (
+                    <Link key={mantra.id} to={`/mantra/${mantra.id}`}>
+                      <Card className="card-divine h-full hover:scale-105 transition-transform">
+                        <CardContent className="p-6">
+                          <div className="text-center mb-4">
+                            <div className="text-3xl font-devanagari text-primary mb-2">ॐ</div>
+                            <Badge variant="secondary" className="mb-2">
+                              {mantra.deity}
+                            </Badge>
+                            {mantra.category && (
+                              <Badge variant="outline" className="ml-2">
+                                {mantra.category}
+                              </Badge>
+                            )}
+                          </div>
+                          
+                          <h3 className="text-lg font-semibold mb-3 text-center line-clamp-2">
+                            {mantra.title}
+                          </h3>
+                          
+                          <div className="mantra-text text-lg mb-3 line-clamp-2">
+                            {mantra.mantra_text}
+                          </div>
+                          
+                          {mantra.meaning && (
+                            <p className="text-muted-foreground text-sm line-clamp-2">
+                              {mantra.meaning}
+                            </p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
+          </>
         )}
       </div>
 

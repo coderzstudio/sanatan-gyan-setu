@@ -16,9 +16,9 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-muted-foreground mb-6 max-w-md">
-              Your gateway to ancient Vedic wisdom and Sanatani knowledge. 
-              Discover, learn, and grow with our comprehensive collection of 
-              sacred texts, mantras, and spiritual guidance.
+              Your gateway to ancient wisdom and spiritual knowledge. 
+              Discover, learn, and grow with our collection of 
+              texts, mantras, and spiritual guidance.
             </p>
             
             {/* Social Media */}
@@ -46,16 +46,16 @@ export default function Footer() {
             <h3 className="font-semibold text-lg mb-4">Quick Links</h3>
             <div className="space-y-2">
               <Link to="/books" className="block text-muted-foreground hover:text-primary transition-colors">
-                Sacred Texts
+                Books
               </Link>
               <Link to="/mantras" className="block text-muted-foreground hover:text-primary transition-colors">
-                Divine Mantras
+                Mantras
               </Link>
               <Link to="/naam-jap" className="block text-muted-foreground hover:text-primary transition-colors">
                 Naam Jap
               </Link>
               <Link to="/store" className="block text-muted-foreground hover:text-primary transition-colors">
-                Sacred Store
+                Store
               </Link>
             </div>
           </div>
