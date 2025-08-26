@@ -32,7 +32,7 @@ export default function Navbar() {
           <Link to="/" className="flex items-center space-x-3">
             <div className="text-2xl font-devanagari text-primary">ॐ</div>
             <span className="text-xl font-semibold text-foreground">
-              Sanatani Gyan Library
+              Sanatani Gyan
             </span>
           </Link>
 
