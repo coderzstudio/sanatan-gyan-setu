@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Search, Sun, Moon } from "lucide-react";
 import { useState } from "react";
+import logo from "@/assets/logo.png";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -11,6 +12,7 @@ const navigation = [
   { name: "Naam Jap", href: "/naam-jap" },
   { name: "Store", href: "/store" },
   { name: "About Us", href: "/about" },
+  { name: "Contact", href: "/contact" },
   { name: "Report", href: "/report" },
 ];
 
@@ -30,7 +32,7 @@ export default function Navbar() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="text-2xl font-devanagari text-primary">ॐ</div>
+            <img src={logo} alt="Sanatani Gyan" className="h-10 w-10" />
             <span className="text-xl font-semibold text-foreground">
               Sanatani Gyan
             </span>

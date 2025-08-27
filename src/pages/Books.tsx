@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +8,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SearchBar from "@/components/SearchBar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { dataService } from "@/utils/dataService";
+import { cache } from "@/utils/cache";
 
 interface Book {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   language: string;
   image_url?: string;
   category: {
@@ -35,6 +36,9 @@ export default function Books() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryBooks, setCategoryBooks] = useState<{ [key: string]: Book[] }>({});
   const [openCategories, setOpenCategories] = useState<{ [key: string]: boolean }>({});
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [currentOffset, setCurrentOffset] = useState(0);
 
   const LIMIT = 12;
 
@@ -48,46 +52,42 @@ export default function Books() {
   }, [allBooks, searchQuery]);
 
   const fetchCategories = async () => {
-    const { data, error } = await supabase
-      .from("categories")
-      .select("*")
-      .order("name");
-
-    if (error) {
-      console.error("Error fetching categories:", error);
-    } else {
+    try {
+      const data = await dataService.fetchCategories() as Category[];
       setCategories(data || []);
       // Initialize all categories as open
       const initialOpenState: { [key: string]: boolean } = {};
-      data?.forEach(category => {
+      (data || []).forEach((category: Category) => {
         initialOpenState[category.id] = true;
       });
       setOpenCategories(initialOpenState);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
     }
   };
 
-  const fetchAllBooks = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("books")
-      .select(`
-        id,
-        title,
-        description,
-        language,
-        image_url,
-        category_id,
-        category:categories(name)
-      `)
-      .order("created_at", { ascending: false });
-
-    if (error) {
+  const fetchAllBooks = async (offset = 0, append = false) => {
+    if (offset === 0) setLoading(true);
+    else setLoadingMore(true);
+    
+    try {
+      const books = await dataService.fetchBooks({ limit: LIMIT, offset });
+      
+      if (append) {
+        setAllBooks(prev => [...prev, ...books]);
+      } else {
+        setAllBooks(books);
+        groupBooksByCategory(books);
+      }
+      
+      setHasMore(books.length === LIMIT);
+      setCurrentOffset(offset + LIMIT);
+    } catch (error) {
       console.error("Error fetching books:", error);
-    } else {
-      setAllBooks(data || []);
-      groupBooksByCategory(data || []);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
     }
-    setLoading(false);
   };
 
   const groupBooksByCategory = (books: Book[]) => {
@@ -238,36 +238,28 @@ export default function Books() {
                       </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {booksInCategory.map((book) => (
                           <Link key={book.id} to={`/book/${book.id}`}>
-                            <Card className="card-divine h-full hover:scale-105 transition-transform">
-                              <CardContent className="p-0">
-                                <div className="aspect-[3/4] bg-gradient-saffron rounded-t-lg relative overflow-hidden">
-                                  {book.image_url ? (
-                                    <img
-                                      src={book.image_url}
-                                      alt={book.title}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center">
-                                      <BookOpen className="h-16 w-16 text-white" />
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="p-4">
-                                  <h3 className="font-semibold text-lg mb-2 line-clamp-2">
-                                    {book.title}
-                                  </h3>
-                                  <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
-                                    {book.description}
-                                  </p>
-                                  <div className="flex items-center justify-between">
-                                    <Badge variant="secondary">
-                                      {book.category?.name}
-                                    </Badge>
-                                    <Badge variant="outline">
+                            <Card className="card-divine hover:scale-105 transition-transform">
+                              <CardContent className="p-3">
+                                <div className="flex gap-3">
+                                  <div className="w-16 h-20 bg-gradient-saffron rounded flex-shrink-0 flex items-center justify-center">
+                                    {book.image_url ? (
+                                      <img
+                                        src={book.image_url}
+                                        alt={book.title}
+                                        className="w-full h-full object-cover rounded"
+                                      />
+                                    ) : (
+                                      <BookOpen className="h-6 w-6 text-white" />
+                                    )}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h3 className="font-semibold text-sm mb-2 line-clamp-2">
+                                      {book.title}
+                                    </h3>
+                                    <Badge variant="outline" className="text-xs">
                                       {book.language}
                                     </Badge>
                                   </div>

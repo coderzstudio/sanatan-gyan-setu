@@ -1,24 +1,25 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, Loader2, ExternalLink } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { dataService } from "@/utils/dataService";
+import { cache } from "@/utils/cache";
 
 interface Book {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   author?: string;
   language: string;
   image_url?: string;
   pdf_link?: string;
   category: {
     name: string;
-    description: string;
+    description?: string;
   };
 }
 
@@ -26,37 +27,33 @@ export default function BookDetail() {
   const { id } = useParams<{ id: string }>();
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
+  const [relatedBooks, setRelatedBooks] = useState<any[]>([]);
 
   useEffect(() => {
     if (id) {
       fetchBook(id);
-      // Add to recently viewed
       addToRecentlyViewed(id);
     }
   }, [id]);
 
   const fetchBook = async (bookId: string) => {
-    const { data, error } = await supabase
-      .from("books")
-      .select(`
-        id,
-        title,
-        description,
-        author,
-        language,
-        image_url,
-        pdf_link,
-        category:categories(name, description)
-      `)
-      .eq("id", bookId)
-      .single();
-
-    if (error) {
+    try {
+      const bookData = await dataService.fetchBookDetail(bookId);
+      setBook(bookData);
+      
+      // Pre-fetch related books from same category in background
+      if (bookData?.category) {
+        const categoryBooks = await dataService.fetchBooksByCategory(
+          (bookData as any).category_id, 
+          4
+        );
+        setRelatedBooks(categoryBooks.filter(b => b.id !== bookId));
+      }
+    } catch (error) {
       console.error("Error fetching book:", error);
-    } else {
-      setBook(data);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const addToRecentlyViewed = (bookId: string) => {
@@ -67,7 +64,7 @@ export default function BookDetail() {
 
   const handleReadBook = () => {
     if (book?.pdf_link) {
-      // Create a new window with PDF viewer
+      // Create a new window with proper PDF viewer
       const pdfWindow = window.open('', '_blank');
       if (pdfWindow) {
         pdfWindow.document.write(`
@@ -75,13 +72,79 @@ export default function BookDetail() {
           <html>
             <head>
               <title>${book.title} - PDF Viewer</title>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <style>
-                body { margin: 0; padding: 0; background: #333; }
-                iframe { width: 100vw; height: 100vh; border: none; }
+                body { 
+                  margin: 0; 
+                  padding: 0; 
+                  background: #f5f5f5; 
+                  font-family: Arial, sans-serif;
+                }
+                .pdf-container {
+                  width: 100vw;
+                  height: 100vh;
+                  display: flex;
+                  flex-direction: column;
+                }
+                .header {
+                  background: #333;
+                  color: white;
+                  padding: 10px 20px;
+                  font-size: 18px;
+                  flex-shrink: 0;
+                }
+                .pdf-viewer {
+                  flex: 1;
+                  border: none;
+                  background: white;
+                }
+                .fallback {
+                  padding: 20px;
+                  text-align: center;
+                }
+                .fallback a {
+                  color: #ff6b35;
+                  text-decoration: none;
+                  font-weight: bold;
+                }
               </style>
             </head>
             <body>
-              <iframe src="${book.pdf_link}" type="application/pdf"></iframe>
+              <div class="pdf-container">
+                <div class="header">
+                  ${book.title}
+                </div>
+                <iframe 
+                  class="pdf-viewer" 
+                  src="${book.pdf_link}#toolbar=1&navpanes=1&scrollbar=1"
+                  type="application/pdf"
+                  onload="this.style.opacity=1"
+                  onerror="showFallback()"
+                >
+                </iframe>
+                <div id="fallback" class="fallback" style="display: none;">
+                  <h3>PDF viewer not supported</h3>
+                  <p><a href="${book.pdf_link}" target="_blank">Click here to download the PDF</a></p>
+                </div>
+              </div>
+              <script>
+                function showFallback() {
+                  document.querySelector('.pdf-viewer').style.display = 'none';
+                  document.getElementById('fallback').style.display = 'block';
+                }
+                
+                // Alternative PDF loading
+                window.addEventListener('load', function() {
+                  const iframe = document.querySelector('.pdf-viewer');
+                  setTimeout(() => {
+                    if (!iframe.contentWindow || iframe.contentWindow.location.href === 'about:blank') {
+                      // Try alternative PDF viewer
+                      iframe.src = 'https://docs.google.com/viewer?url=' + encodeURIComponent('${book.pdf_link}') + '&embedded=true';
+                    }
+                  }, 3000);
+                });
+              </script>
             </body>
           </html>
         `);
@@ -205,18 +268,26 @@ export default function BookDetail() {
                 </div>
               )}
 
-              {/* PDF Viewer */}
+              {/* PDF Preview */}
               {book.pdf_link && (
                 <div>
                   <h2 className="text-2xl font-semibold mb-3">Preview</h2>
                   <Card className="card-divine">
                     <CardContent className="p-4">
-                      <div className="aspect-[4/3] w-full">
-                        <iframe
-                          src={`${book.pdf_link}/preview`}
-                          className="w-full h-full rounded-lg border"
-                          title={`Preview of ${book.title}`}
-                        />
+                      <div className="aspect-[4/3] w-full bg-muted rounded-lg flex items-center justify-center">
+                        <div className="text-center">
+                          <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                          <p className="text-muted-foreground">
+                            Click "Read Book" to view the full PDF
+                          </p>
+                          <Button 
+                            onClick={handleReadBook}
+                            className="btn-divine mt-4"
+                          >
+                            <BookOpen className="mr-2 h-4 w-4" />
+                            Open PDF Reader
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Instagram, Youtube, Send, Facebook, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.png";
 
 export default function Footer() {
   return (
@@ -10,15 +11,14 @@ export default function Footer() {
           {/* Logo and Description */}
           <div className="md:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="text-3xl font-devanagari text-primary">ॐ</div>
+              <img src={logo} alt="Sanatani Gyan" className="h-10 w-10" />
               <span className="text-xl font-semibold">
                 Sanatani Gyan
               </span>
             </div>
             <p className="text-muted-foreground mb-6 max-w-md">
-              Your gateway to ancient wisdom and spiritual knowledge. 
-              Discover, learn, and grow with our collection of 
-              texts, mantras, and spiritual guidance.
+              Keeping old wisdom for today's people. Explore our books, mantras, and spiritual 
+              resources to learn more about Hindu teachings.
             </p>
             
             {/* Social Media */}
@@ -67,15 +67,15 @@ export default function Footer() {
               <Link to="/about" className="block text-muted-foreground hover:text-primary transition-colors">
                 About Us
               </Link>
+              <Link to="/contact" className="block text-muted-foreground hover:text-primary transition-colors">
+                Contact
+              </Link>
+              <Link to="/privacy" className="block text-muted-foreground hover:text-primary transition-colors">
+                Privacy Policy
+              </Link>
               <Link to="/report" className="block text-muted-foreground hover:text-primary transition-colors">
                 Report Issue
               </Link>
-              <a href="#" className="block text-muted-foreground hover:text-primary transition-colors">
-                Contact
-              </a>
-              <a href="#" className="block text-muted-foreground hover:text-primary transition-colors">
-                Privacy Policy
-              </a>
             </div>
           </div>
         </div>

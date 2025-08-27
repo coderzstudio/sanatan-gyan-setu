@@ -16,6 +16,8 @@ const NaamJap = lazy(() => import("./pages/NaamJap"));
 const Store = lazy(() => import("./pages/Store"));
 const Mantras = lazy(() => import("./pages/Mantras"));
 const MantraDetail = lazy(() => import("./pages/MantraDetail"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Privacy = lazy(() => import("./pages/Privacy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading component
@@ -46,6 +48,8 @@ const App = () => (
             <Route path="/naam-jap" element={<NaamJap />} />
             <Route path="/store" element={<Store />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/report" element={<Report />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
