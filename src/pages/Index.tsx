@@ -114,7 +114,7 @@ export default function Index() {
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
               {recentlyViewedBooks.map((book) => (
                 <Link key={book.id} to={`/book/${book.id}`} className="flex-shrink-0">
-                  <Card className="card-divine w-36 h-56 hover:scale-105 transition-transform">
+                  <Card className="card-divine w-40 h-60 hover:scale-105 transition-transform">
                     <CardContent className="p-0 h-full flex flex-col">
                       <div className="h-36 bg-gradient-saffron rounded-t-lg relative overflow-hidden flex-shrink-0">
                         {book.image_url ? (
@@ -163,7 +163,7 @@ export default function Index() {
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
             {recentBooks.map((book) => (
               <Link key={book.id} to={`/book/${book.id}`} className="flex-shrink-0">
-                <Card className="card-divine w-39 h-60 hover:scale-105 transition-transform">
+                <Card className="card-divine w-40 h-60 hover:scale-105 transition-transform">
                   <CardContent className="p-0 h-full flex flex-col">
                     <div className="h-32 bg-gradient-saffron rounded-t-lg relative overflow-hidden flex-shrink-0">
                       {book.image_url ? (
