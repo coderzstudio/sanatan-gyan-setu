@@ -75,6 +75,9 @@ export default function Books() {
       
       if (append) {
         setAllBooks(prev => [...prev, ...books]);
+        // Update category books with new data
+        const allBooksIncludingNew = [...allBooks, ...books];
+        groupBooksByCategory(allBooksIncludingNew);
       } else {
         setAllBooks(books);
         groupBooksByCategory(books);

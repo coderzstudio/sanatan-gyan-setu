@@ -98,14 +98,6 @@ export default function Index() {
         <HeroSlider />
       </section>
 
-      {/* Search Bar */}
-      <section className="container mx-auto px-4 mb-8">
-        <SearchBar 
-          onSearch={setSearchQuery} 
-          placeholder="Search books, mantras, or topics..."
-          className="max-w-2xl mx-auto"
-        />
-      </section>
 
       <div className="container mx-auto px-4 pb-8">
         {/* Recently Viewed Books */}
@@ -122,9 +114,9 @@ export default function Index() {
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
               {recentlyViewedBooks.map((book) => (
                 <Link key={book.id} to={`/book/${book.id}`} className="flex-shrink-0">
-                  <Card className="card-divine w-36 h-52 hover:scale-105 transition-transform">
+                  <Card className="card-divine w-36 h-56 hover:scale-105 transition-transform">
                     <CardContent className="p-0 h-full flex flex-col">
-                      <div className="aspect-[3/4] bg-gradient-saffron rounded-t-lg relative overflow-hidden flex-grow">
+                      <div className="h-36 bg-gradient-saffron rounded-t-lg relative overflow-hidden flex-shrink-0">
                         {book.image_url ? (
                           <img
                             src={book.image_url}
@@ -137,15 +129,15 @@ export default function Index() {
                           </div>
                         )}
                       </div>
-                      <div className="p-2 flex-shrink-0">
-                        <h3 className="font-semibold text-xs mb-1 line-clamp-2">
+                      <div className="p-2 flex-1 flex flex-col justify-between">
+                        <h3 className="font-semibold text-xs mb-1 line-clamp-2 h-8">
                           {book.title}
                         </h3>
                         <div className="flex flex-col gap-1">
-                          <Badge variant="secondary" className="text-xs w-fit">
+                          <Badge variant="secondary" className="text-xs w-fit h-5">
                             {book.category?.name}
                           </Badge>
-                          <Badge variant="outline" className="text-xs w-fit">
+                          <Badge variant="outline" className="text-xs w-fit h-5">
                             {book.language}
                           </Badge>
                         </div>
@@ -171,9 +163,9 @@ export default function Index() {
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
             {recentBooks.map((book) => (
               <Link key={book.id} to={`/book/${book.id}`} className="flex-shrink-0">
-                <Card className="card-divine w-36 h-52 hover:scale-105 transition-transform">
+                <Card className="card-divine w-36 h-56 hover:scale-105 transition-transform">
                   <CardContent className="p-0 h-full flex flex-col">
-                    <div className="aspect-[3/4] bg-gradient-saffron rounded-t-lg relative overflow-hidden flex-grow">
+                    <div className="h-36 bg-gradient-saffron rounded-t-lg relative overflow-hidden flex-shrink-0">
                       {book.image_url ? (
                         <img
                           src={book.image_url}
@@ -186,15 +178,15 @@ export default function Index() {
                         </div>
                       )}
                     </div>
-                    <div className="p-2 flex-shrink-0">
-                      <h3 className="font-semibold text-xs mb-1 line-clamp-2">
+                    <div className="p-2 flex-1 flex flex-col justify-between">
+                      <h3 className="font-semibold text-xs mb-1 line-clamp-2 h-8">
                         {book.title}
                       </h3>
                       <div className="flex flex-col gap-1">
-                        <Badge variant="secondary" className="text-xs w-fit">
+                        <Badge variant="secondary" className="text-xs w-fit h-5">
                           {book.category?.name}
                         </Badge>
-                        <Badge variant="outline" className="text-xs w-fit">
+                        <Badge variant="outline" className="text-xs w-fit h-5">
                           {book.language}
                         </Badge>
                       </div>
@@ -219,19 +211,19 @@ export default function Index() {
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
             {recentMantras.map((mantra) => (
               <Link key={mantra.id} to={`/mantra/${mantra.id}`} className="flex-shrink-0">
-                <Card className="card-divine w-40 h-48 hover:scale-105 transition-transform">
-                  <CardContent className="p-3 h-full flex flex-col">
-                    <div className="aspect-square bg-gradient-divine rounded-lg flex items-center justify-center mb-3 flex-grow">
+                <Card className="card-divine w-36 h-56 hover:scale-105 transition-transform">
+                  <CardContent className="p-0 h-full flex flex-col">
+                    <div className="h-36 bg-gradient-divine rounded-t-lg flex items-center justify-center flex-shrink-0">
                       <div className="text-center">
                         <div className="text-2xl font-devanagari text-primary mb-1">ॐ</div>
                         <div className="text-sm font-medium text-primary">{mantra.deity}</div>
                       </div>
                     </div>
-                    <div className="flex-shrink-0">
-                      <h3 className="font-semibold text-xs mb-2 line-clamp-2">
+                    <div className="p-2 flex-1 flex flex-col justify-between">
+                      <h3 className="font-semibold text-xs mb-1 line-clamp-2 h-8">
                         {mantra.title}
                       </h3>
-                      <Badge variant="secondary" className="text-xs w-fit">
+                      <Badge variant="secondary" className="text-xs w-fit h-5">
                         {mantra.category}
                       </Badge>
                     </div>

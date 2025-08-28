@@ -75,11 +75,17 @@ export default function BookDetail() {
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <style>
+                * {
+                  margin: 0;
+                  padding: 0;
+                  box-sizing: border-box;
+                }
                 body { 
                   margin: 0; 
                   padding: 0; 
                   background: #f5f5f5; 
                   font-family: Arial, sans-serif;
+                  overflow: hidden;
                 }
                 .pdf-container {
                   width: 100vw;
@@ -93,15 +99,28 @@ export default function BookDetail() {
                   padding: 10px 20px;
                   font-size: 18px;
                   flex-shrink: 0;
+                  z-index: 1000;
                 }
                 .pdf-viewer {
                   flex: 1;
                   border: none;
                   background: white;
+                  width: 100%;
+                  height: calc(100vh - 50px);
+                  position: absolute;
+                  top: 50px;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
                 }
                 .fallback {
                   padding: 20px;
                   text-align: center;
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  z-index: 1001;
                 }
                 .fallback a {
                   color: #ff6b35;
@@ -117,8 +136,10 @@ export default function BookDetail() {
                 </div>
                 <iframe 
                   class="pdf-viewer" 
-                  src="${book.pdf_link}#toolbar=1&navpanes=1&scrollbar=1"
+                  src="${book.pdf_link}#toolbar=1&navpanes=1&scrollbar=1&view=FitH"
                   type="application/pdf"
+                  frameborder="0"
+                  allowfullscreen
                   onload="this.style.opacity=1"
                   onerror="showFallback()"
                 >
@@ -134,15 +155,15 @@ export default function BookDetail() {
                   document.getElementById('fallback').style.display = 'block';
                 }
                 
-                // Alternative PDF loading
+                // Alternative PDF loading with better viewer
                 window.addEventListener('load', function() {
                   const iframe = document.querySelector('.pdf-viewer');
                   setTimeout(() => {
                     if (!iframe.contentWindow || iframe.contentWindow.location.href === 'about:blank') {
-                      // Try alternative PDF viewer
+                      // Try Google Docs viewer
                       iframe.src = 'https://docs.google.com/viewer?url=' + encodeURIComponent('${book.pdf_link}') + '&embedded=true';
                     }
-                  }, 3000);
+                  }, 2000);
                 });
               </script>
             </body>
