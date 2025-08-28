@@ -134,11 +134,6 @@ export default function Books() {
       
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
-            Books Library
-          </h1>
-        </div>
 
         {/* Search Bar */}
         <SearchBar 
