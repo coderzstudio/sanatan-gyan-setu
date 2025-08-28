@@ -165,7 +165,7 @@ export default function Index() {
               <Link key={book.id} to={`/book/${book.id}`} className="flex-shrink-0">
                 <Card className="card-divine w-36 h-56 hover:scale-105 transition-transform">
                   <CardContent className="p-0 h-full flex flex-col">
-                    <div className="h-36 bg-gradient-saffron rounded-t-lg relative overflow-hidden flex-shrink-0">
+                    <div className="h-32 bg-gradient-saffron rounded-t-lg relative overflow-hidden flex-shrink-0">
                       {book.image_url ? (
                         <img
                           src={book.image_url}
@@ -178,15 +178,15 @@ export default function Index() {
                         </div>
                       )}
                     </div>
-                    <div className="p-2 flex-1 flex flex-col justify-between">
-                      <h3 className="font-semibold text-xs mb-1 line-clamp-2 h-10">
+                    <div className="p-2 flex-1 flex flex-col justify-between overflow-hidden">
+                      <h3 className="font-semibold text-xs mb-1 truncate">
                         {book.title}
                       </h3>
                       <div className="flex flex-col gap-1">
-                        <Badge variant="secondary" className="text-xs w-fit h-5">
+                        <Badge variant="secondary" className="text-xs w-fit h-5 truncate max-w-full">
                           {book.category?.name}
                         </Badge>
-                        <Badge variant="outline" className="text-xs w-fit h-5">
+                        <Badge variant="outline" className="text-xs w-fit h-5 truncate max-w-full">
                           {book.language}
                         </Badge>
                       </div>
