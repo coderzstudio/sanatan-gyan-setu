@@ -66,6 +66,7 @@ class DataService {
         description,
         language,
         image_url,
+        category_id,
         category:categories(name)
       `)
       .range(offset, offset + limit - 1)

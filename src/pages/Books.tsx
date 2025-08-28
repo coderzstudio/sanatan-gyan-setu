@@ -244,25 +244,25 @@ export default function Books() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {booksInCategory.map((book) => (
                           <Link key={book.id} to={`/book/${book.id}`}>
-                            <Card className="card-divine hover:scale-105 transition-transform">
-                              <CardContent className="p-3">
-                                <div className="flex gap-3">
-                                  <div className="w-16 h-20 bg-gradient-saffron rounded flex-shrink-0 flex items-center justify-center">
+                            <Card className="card-divine hover:scale-105 transition-transform h-24">
+                              <CardContent className="p-3 h-full">
+                                <div className="flex gap-3 h-full">
+                                  <div className="w-16 h-18 bg-gradient-saffron rounded flex-shrink-0 flex items-center justify-center overflow-hidden">
                                     {book.image_url ? (
                                       <img
                                         src={book.image_url}
                                         alt={book.title}
-                                        className="w-full h-full object-cover rounded"
+                                        className="w-14 h-16 object-cover rounded m-1"
                                       />
                                     ) : (
                                       <BookOpen className="h-6 w-6 text-white" />
                                     )}
                                   </div>
-                                  <div className="flex-1 min-w-0">
+                                  <div className="flex-1 min-w-0 flex flex-col justify-center">
                                     <h3 className="font-semibold text-sm mb-2 line-clamp-2">
                                       {book.title}
                                     </h3>
-                                    <Badge variant="outline" className="text-xs">
+                                    <Badge variant="outline" className="text-xs w-fit">
                                       {book.language}
                                     </Badge>
                                   </div>
