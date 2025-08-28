@@ -90,11 +90,7 @@ export default function Mantras() {
       
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
-            Mantras
-          </h1>
-        </div>
+        
 
         {/* Search Bar */}
         <SearchBar 
