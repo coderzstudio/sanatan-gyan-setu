@@ -130,7 +130,7 @@ export default function Index() {
                         )}
                       </div>
                       <div className="p-2 flex-1 flex flex-col justify-between">
-                        <h3 className="font-semibold text-xs mb-1 line-clamp-2 h-8">
+                        <h3 className="font-semibold text-xs mb-1 line-clamp-2 h-10">
                           {book.title}
                         </h3>
                         <div className="flex flex-col gap-1">
@@ -179,7 +179,7 @@ export default function Index() {
                       )}
                     </div>
                     <div className="p-2 flex-1 flex flex-col justify-between">
-                      <h3 className="font-semibold text-xs mb-1 line-clamp-2 h-8">
+                      <h3 className="font-semibold text-xs mb-1 line-clamp-2 h-10">
                         {book.title}
                       </h3>
                       <div className="flex flex-col gap-1">
