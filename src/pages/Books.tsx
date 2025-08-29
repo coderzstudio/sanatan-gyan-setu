@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SearchBar from "@/components/SearchBar";
+import defaultBookImage from "@/assets/default-book.jpg";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { dataService } from "@/utils/dataService";
 import { cache } from "@/utils/cache";
@@ -167,20 +168,21 @@ export default function Books() {
                   <Link key={book.id} to={`/book/${book.id}`}>
                     <Card className="card-divine h-full hover:scale-105 transition-transform">
                       <CardContent className="p-0">
-                        <div className="h-64 bg-gradient-saffron rounded-t-lg relative overflow-hidden">
-                          {book.image_url ? (
-                            <img
-                              src={book.image_url}
-                              alt={book.title}
-                              className="w-full h-full object-cover m-2 rounded"
-                              style={{ width: 'calc(100% - 16px)', height: 'calc(100% - 16px)' }}
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <BookOpen className="h-16 w-16 text-white" />
-                            </div>
-                          )}
-                        </div>
+                          <div className="h-64 bg-gradient-saffron rounded-t-lg relative overflow-hidden">
+                           {book.image_url ? (
+                             <img
+                               src={book.image_url}
+                               alt={book.title}
+                               className="w-full h-full object-cover"
+                             />
+                           ) : (
+                             <img
+                               src={defaultBookImage}
+                               alt={book.title}
+                               className="w-full h-full object-cover"
+                             />
+                           )}
+                         </div>
                         <div className="p-4">
                           <h3 className="font-semibold text-lg mb-2 line-clamp-2">
                             {book.title}
@@ -243,17 +245,21 @@ export default function Books() {
                             <Card className="card-divine hover:scale-105 transition-transform h-28">
                               <CardContent className="p-3 h-full">
                                 <div className="flex gap-3 h-full">
-                                  <div className="w-20 h-22 bg-gradient-saffron rounded flex-shrink-0 flex items-center justify-center overflow-hidden">
-                                    {book.image_url ? (
-                                      <img
-                                        src={book.image_url}
-                                        alt={book.title}
-                                        className="w-16 h-20 object-cover rounded m-2"
-                                      />
-                                    ) : (
-                                      <BookOpen className="h-8 w-8 text-white" />
-                                    )}
-                                  </div>
+                                   <div className="w-20 h-22 bg-gradient-saffron rounded flex-shrink-0 flex items-center justify-center overflow-hidden">
+                                     {book.image_url ? (
+                                       <img
+                                         src={book.image_url}
+                                         alt={book.title}
+                                         className="w-full h-full object-cover"
+                                       />
+                                     ) : (
+                                       <img
+                                         src={defaultBookImage}
+                                         alt={book.title}
+                                         className="w-full h-full object-cover"
+                                       />
+                                     )}
+                                   </div>
                                   <div className="flex-1 min-w-0 flex flex-col justify-center">
                                     <h3 className="font-semibold text-sm mb-2 line-clamp-2">
                                       {book.title}

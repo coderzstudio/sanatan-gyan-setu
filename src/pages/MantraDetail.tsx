@@ -34,10 +34,11 @@ export default function MantraDetail() {
     return () => {
       if (audio) {
         audio.pause();
-        audio.src = "";
+        audio.currentTime = 0;
+        setAudio(null);
       }
     };
-  }, [id]);
+  }, [id, audio]);
 
   const fetchMantra = async (mantraId: string) => {
     const { data, error } = await supabase
@@ -60,20 +61,41 @@ export default function MantraDetail() {
     if (audio) {
       if (isPlaying) {
         audio.pause();
+        setIsPlaying(false);
       } else {
-        audio.play();
+        audio.play().catch(error => {
+          console.error("Error playing audio:", error);
+          setIsPlaying(false);
+        });
+        setIsPlaying(true);
       }
-      setIsPlaying(!isPlaying);
     } else {
       const newAudio = new Audio(mantra.audio_url);
-      newAudio.addEventListener("ended", () => setIsPlaying(false));
-      newAudio.addEventListener("error", () => {
-        console.error("Error playing audio");
+      
+      newAudio.addEventListener("loadstart", () => {
+        console.log("Audio loading started");
+      });
+      
+      newAudio.addEventListener("canplay", () => {
+        console.log("Audio can start playing");
+      });
+      
+      newAudio.addEventListener("ended", () => {
+        setIsPlaying(false);
+      });
+      
+      newAudio.addEventListener("error", (e) => {
+        console.error("Audio error:", e);
         setIsPlaying(false);
       });
       
       setAudio(newAudio);
-      newAudio.play();
+      
+      newAudio.play().catch(error => {
+        console.error("Error playing audio:", error);
+        setIsPlaying(false);
+      });
+      
       setIsPlaying(true);
     }
   };
@@ -134,7 +156,7 @@ export default function MantraDetail() {
 
               {/* Mantra Text */}
               <div className="text-center mb-8">
-                <div className="mantra-text mb-6 p-6 bg-gradient-divine rounded-lg">
+                <div className="mantra-text mb-6 p-6 bg-gradient-divine rounded-lg whitespace-pre-line">
                   {mantra.mantra_text}
                 </div>
                 
@@ -142,7 +164,7 @@ export default function MantraDetail() {
                 {mantra.meaning && (
                   <div className="mantra-meaning">
                     <h3 className="text-xl font-semibold mb-3 text-primary">Meaning</h3>
-                    <p className="text-lg leading-relaxed max-w-3xl mx-auto">
+                    <p className="text-lg leading-relaxed max-w-3xl mx-auto whitespace-pre-line">
                       {mantra.meaning}
                     </p>
                   </div>
@@ -170,21 +192,6 @@ export default function MantraDetail() {
                   </Button>
                 </div>
               )}
-
-              {/* Benefits/Instructions */}
-              <div className="bg-gradient-divine rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-4 text-primary text-center">
-                  How to Practice
-                </h3>
-                <div className="space-y-3 text-muted-foreground">
-                  <p>• Find a quiet, clean space for your practice</p>
-                  <p>• Sit comfortably with your back straight</p>
-                  <p>• Close your eyes and take a few deep breaths</p>
-                  <p>• Chant the mantra with devotion and focus</p>
-                  <p>• Repeat 108 times using a mala (prayer beads) if available</p>
-                  <p>• Practice regularly for maximum spiritual benefit</p>
-                </div>
-              </div>
 
               {/* Start Naam Jap */}
               <div className="text-center mt-8">

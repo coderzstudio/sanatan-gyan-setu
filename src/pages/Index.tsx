@@ -7,7 +7,7 @@ import { BookOpen, ArrowRight, Loader2, Users, Globe, Shield, Share2 } from "luc
 import HeroSlider from "@/components/HeroSlider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import SearchBar from "@/components/SearchBar";
+import defaultBookImage from "@/assets/default-book.jpg";
 import { dataService } from "@/utils/dataService";
 import { cache } from "@/utils/cache";
 
@@ -118,15 +118,17 @@ export default function Index() {
                     <CardContent className="p-0 h-full flex flex-col">
                       <div className="h-36 bg-gradient-saffron rounded-t-lg relative overflow-hidden flex-shrink-0">
                         {book.image_url ? (
-                          <img
-                            src={book.image_url}
+                          <img 
+                            src={book.image_url} 
                             alt={book.title}
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <BookOpen className="h-8 w-8 text-white" />
-                          </div>
+                          <img 
+                            src={defaultBookImage} 
+                            alt={book.title}
+                            className="w-full h-full object-cover"
+                          />
                         )}
                       </div>
                       <div className="p-2 flex-1 flex flex-col justify-between">
@@ -167,15 +169,17 @@ export default function Index() {
                   <CardContent className="p-0 h-full flex flex-col">
                     <div className="h-32 bg-gradient-saffron rounded-t-lg relative overflow-hidden flex-shrink-0">
                       {book.image_url ? (
-                        <img
-                          src={book.image_url}
+                        <img 
+                          src={book.image_url} 
                           alt={book.title}
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <BookOpen className="h-8 w-8 text-white" />
-                        </div>
+                        <img 
+                          src={defaultBookImage} 
+                          alt={book.title}
+                          className="w-full h-full object-cover"
+                        />
                       )}
                     </div>
                     <div className="p-2 flex-1 flex flex-col justify-between overflow-hidden">

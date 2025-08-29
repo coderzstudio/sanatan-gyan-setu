@@ -18,7 +18,7 @@ interface Mantra {
   category: string;
 }
 
-const deityCategories = [
+const defaultDeityCategories = [
   "All",
   "Krishna",
   "Shiva",
@@ -35,9 +35,16 @@ export default function Mantras() {
   const [selectedDeity, setSelectedDeity] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [deityCategories, setDeityCategories] = useState<string[]>(defaultDeityCategories);
 
   useEffect(() => {
     fetchMantras();
+    
+    // Load deities from localStorage if available
+    const savedDeities = localStorage.getItem('deity_categories');
+    if (savedDeities) {
+      setDeityCategories(JSON.parse(savedDeities));
+    }
   }, []);
 
   useEffect(() => {
@@ -56,6 +63,13 @@ export default function Mantras() {
       console.error("Error fetching mantras:", error);
     } else {
       setAllMantras(data || []);
+      
+      // Extract unique deities and save to localStorage
+      if (data && data.length > 0) {
+        const uniqueDeities = ["All", ...Array.from(new Set(data.map(mantra => mantra.deity)))];
+        setDeityCategories(uniqueDeities);
+        localStorage.setItem('deity_categories', JSON.stringify(uniqueDeities));
+      }
     }
     
     setLoading(false);

@@ -148,6 +148,21 @@ export default function NaamJap() {
                 <CardTitle className="text-center text-2xl text-primary">
                   Start Your Practice
                 </CardTitle>
+                
+                {/* How to Practice Section */}
+                <div className="bg-gradient-divine rounded-lg p-6 mt-6">
+                  <h3 className="text-xl font-semibold mb-4 text-primary text-center">
+                    How to Practice
+                  </h3>
+                  <div className="space-y-3 text-muted-foreground">
+                    <p>• Find a quiet, clean space for your practice</p>
+                    <p>• Sit comfortably with your back straight</p>
+                    <p>• Close your eyes and take a few deep breaths</p>
+                    <p>• Chant the mantra with devotion and focus</p>
+                    <p>• Repeat 108 times using a mala (prayer beads) if available</p>
+                    <p>• Practice regularly for maximum spiritual benefit</p>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Mantra Selection */}
