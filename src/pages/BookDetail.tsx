@@ -155,13 +155,13 @@ export default function BookDetail() {
                   document.getElementById('fallback').style.display = 'block';
                 }
                 
-                // Alternative PDF loading with better viewer
+                // Alternative PDF loading with Mozilla PDF.js viewer
                 window.addEventListener('load', function() {
                   const iframe = document.querySelector('.pdf-viewer');
                   setTimeout(() => {
                     if (!iframe.contentWindow || iframe.contentWindow.location.href === 'about:blank') {
-                      // Try Google Docs viewer
-                      iframe.src = 'https://docs.google.com/viewer?url=' + encodeURIComponent('${book.pdf_link}') + '&embedded=true';
+                      // Try Mozilla PDF.js viewer (no login required)
+                      iframe.src = 'https://mozilla.github.io/pdf.js/web/viewer.html?file=' + encodeURIComponent('${book.pdf_link}');
                     }
                   }, 2000);
                 });

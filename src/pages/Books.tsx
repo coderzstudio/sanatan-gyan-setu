@@ -167,12 +167,13 @@ export default function Books() {
                   <Link key={book.id} to={`/book/${book.id}`}>
                     <Card className="card-divine h-full hover:scale-105 transition-transform">
                       <CardContent className="p-0">
-                        <div className="aspect-[3/4] bg-gradient-saffron rounded-t-lg relative overflow-hidden">
+                        <div className="h-64 bg-gradient-saffron rounded-t-lg relative overflow-hidden">
                           {book.image_url ? (
                             <img
                               src={book.image_url}
                               alt={book.title}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover m-2 rounded"
+                              style={{ width: 'calc(100% - 16px)', height: 'calc(100% - 16px)' }}
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
@@ -236,21 +237,21 @@ export default function Books() {
                       </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {booksInCategory.map((book) => (
                           <Link key={book.id} to={`/book/${book.id}`}>
-                            <Card className="card-divine hover:scale-105 transition-transform h-24">
+                            <Card className="card-divine hover:scale-105 transition-transform h-28">
                               <CardContent className="p-3 h-full">
                                 <div className="flex gap-3 h-full">
-                                  <div className="w-16 h-18 bg-gradient-saffron rounded flex-shrink-0 flex items-center justify-center overflow-hidden">
+                                  <div className="w-20 h-22 bg-gradient-saffron rounded flex-shrink-0 flex items-center justify-center overflow-hidden">
                                     {book.image_url ? (
                                       <img
                                         src={book.image_url}
                                         alt={book.title}
-                                        className="w-14 h-16 object-cover rounded m-1"
+                                        className="w-16 h-20 object-cover rounded m-2"
                                       />
                                     ) : (
-                                      <BookOpen className="h-6 w-6 text-white" />
+                                      <BookOpen className="h-8 w-8 text-white" />
                                     )}
                                   </div>
                                   <div className="flex-1 min-w-0 flex flex-col justify-center">
