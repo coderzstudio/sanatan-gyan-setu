@@ -1,7 +1,1 @@
-# Ads.txt file for Sanatani Gyan
-# This file indicates authorized sellers of ad inventory on this website
-# Format: <Field 1>, <Field 2>, <Field 3>, <Field 4>
-# Example: google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
-
-# Currently no advertising partners
-# This file will be updated when advertising partnerships are established
+google.com, pub-9971041886451384, DIRECT, f08c47fec0942fa0
