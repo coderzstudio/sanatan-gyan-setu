@@ -6,7 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, ShoppingCart, Star } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
+import { breadcrumbStructuredData } from "@/utils/seoData";
 
 interface Product {
   id: string;
@@ -76,8 +78,20 @@ export default function Store() {
     return cart.length;
   };
 
+  const breadcrumbData = breadcrumbStructuredData([
+    { name: "Home", url: "https://sanatanigyan.netlify.app/" },
+    { name: "Store", url: "https://sanatanigyan.netlify.app/store" }
+  ]);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Sacred Store - Spiritual Books, Pooja Kits & QR Cards | Sanatani Gyan"
+        description="Shop authentic spiritual products including religious books, pooja kits, QR-based darshan cards, and sacred accessories. Premium quality items for your spiritual journey."
+        keywords="Hindu spiritual products, pooja kits, religious books, QR darshan cards, spiritual accessories, sacred items, Hindu store, spiritual shopping"
+        url="https://sanatanigyan.netlify.app/store"
+        structuredData={breadcrumbData}
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">

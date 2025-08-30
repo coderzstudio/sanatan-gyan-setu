@@ -2,10 +2,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Phone, MapPin, Heart, Target, Eye } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import { breadcrumbStructuredData, organizationStructuredData } from "@/utils/seoData";
 
 export default function AboutUs() {
+  const breadcrumbData = breadcrumbStructuredData([
+    { name: "Home", url: "https://sanatanigyan.netlify.app/" },
+    { name: "About Us", url: "https://sanatanigyan.netlify.app/about" }
+  ]);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="About Sanatani Gyan - Our Mission, Vision & Values"
+        description="Learn about Sanatani Gyan's mission to preserve and share authentic Hindu scriptures and spiritual wisdom. Our vision for global access to Vedic knowledge and dharmic values."
+        keywords="about sanatani gyan, Hindu spiritual platform, Vedic knowledge, dharma, spiritual mission, Hindu values, religious organization, spiritual wisdom"
+        url="https://sanatanigyan.netlify.app/about"
+        structuredData={[breadcrumbData, organizationStructuredData]}
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">

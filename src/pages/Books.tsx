@@ -7,10 +7,12 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SearchBar from "@/components/SearchBar";
+import SEO from "@/components/SEO";
 import defaultBookImage from "@/assets/default-book.jpg";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { dataService } from "@/utils/dataService";
 import { cache } from "@/utils/cache";
+import { breadcrumbStructuredData } from "@/utils/seoData";
 
 interface Book {
   id: string;
@@ -129,8 +131,20 @@ export default function Books() {
     }));
   };
 
+  const breadcrumbData = breadcrumbStructuredData([
+    { name: "Home", url: "https://sanatanigyan.netlify.app/" },
+    { name: "Shastras", url: "https://sanatanigyan.netlify.app/books" }
+  ]);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Hindu Scriptures & Sacred Texts - Bhagavad Gita, Vedas, Upanishads"
+        description="Explore comprehensive collection of Hindu scriptures including Bhagavad Gita, Vedas, Upanishads, Puranas, Ramayana, and Mahabharata. Free access to authentic religious texts in multiple languages."
+        keywords="Hindu scriptures, Bhagavad Gita, Vedas, Upanishads, Puranas, Ramayana, Mahabharata, religious texts, Sanskrit books, spiritual literature, dharma shastras"
+        url="https://sanatanigyan.netlify.app/books"
+        structuredData={breadcrumbData}
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">

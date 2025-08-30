@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SearchBar from "@/components/SearchBar";
+import SEO from "@/components/SEO";
+import { breadcrumbStructuredData } from "@/utils/seoData";
 
 interface Mantra {
   id: string;
@@ -98,8 +100,20 @@ export default function Mantras() {
     setFilteredMantras(filtered);
   };
 
+  const breadcrumbData = breadcrumbStructuredData([
+    { name: "Home", url: "https://sanatanigyan.netlify.app/" },
+    { name: "Mantras", url: "https://sanatanigyan.netlify.app/mantras" }
+  ]);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Sacred Hindu Mantras - Krishna, Shiva, Ganesh, Devi Mantras"
+        description="Discover powerful Sanskrit mantras for Krishna, Shiva, Ganesh, Devi, Vishnu, Rama, Hanuman. Listen to sacred chants with meanings, benefits, and proper pronunciation guides."
+        keywords="Hindu mantras, Sanskrit chants, Krishna mantras, Shiva mantras, Ganesh mantras, Devi mantras, Vishnu mantras, spiritual chants, meditation mantras, prayer mantras"
+        url="https://sanatanigyan.netlify.app/mantras"
+        structuredData={breadcrumbData}
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">

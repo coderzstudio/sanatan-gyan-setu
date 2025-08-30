@@ -9,7 +9,9 @@ import { AlertCircle, CheckCircle, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
+import { breadcrumbStructuredData } from "@/utils/seoData";
 
 const issueTypes = [
   { value: "copyright", label: "Copyright Infringement" },
@@ -30,6 +32,13 @@ export default function Report() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
+
+  const breadcrumbData = breadcrumbStructuredData([
+    { name: "Home", url: "https://sanatanigyan.netlify.app/" },
+    { name: "Report Issue", url: "https://sanatanigyan.netlify.app/report" }
+  ]);
+
+  // ... keep existing code (handleInputChange, handleSubmit functions)
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -89,6 +98,12 @@ export default function Report() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-background">
+        <SEO
+          title="Report Submitted Successfully | Sanatani Gyan"
+          description="Thank you for your feedback. Your report has been submitted and our team will review it within 24-48 hours."
+          url="https://sanatanigyan.netlify.app/report"
+          noindex={true}
+        />
         <Navbar />
         
         <div className="container mx-auto px-4 py-8">
@@ -121,6 +136,13 @@ export default function Report() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Report an Issue - Bug Reports & Feedback | Sanatani Gyan"
+        description="Report bugs, copyright issues, content problems or share feedback to help us improve Sanatani Gyan. We respond to all reports within 24-48 hours."
+        keywords="report bug, website feedback, copyright issue, content problem, technical support, user feedback, issue reporting"
+        url="https://sanatanigyan.netlify.app/report"
+        structuredData={breadcrumbData}
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">

@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { RotateCcw, Play, Pause, Target, Clock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import { breadcrumbStructuredData } from "@/utils/seoData";
 
 interface JapSession {
   mantra: string;
@@ -125,8 +127,20 @@ export default function NaamJap() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  const breadcrumbData = breadcrumbStructuredData([
+    { name: "Home", url: "https://sanatanigyan.netlify.app/" },
+    { name: "Naam Jap", url: "https://sanatanigyan.netlify.app/naam-jap" }
+  ]);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Naam Jap - Digital Mala Counter | Sanatani Gyan"
+        description="Practice Naam Jap with our digital mala counter. Set targets of 21, 108, 432, or 1080 repetitions. Track your mantra chanting progress with timer and statistics."
+        keywords="naam jap, digital mala, mantra counter, japa meditation, Hindu prayer counter, spiritual practice, mala beads, mantra repetition, meditation timer"
+        url="https://sanatanigyan.netlify.app/naam-jap"
+        structuredData={breadcrumbData}
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">

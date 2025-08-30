@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Play, Pause, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import { createMantraStructuredData, breadcrumbStructuredData } from "@/utils/seoData";
 
 interface Mantra {
   id: string;
@@ -115,6 +117,12 @@ export default function MantraDetail() {
   if (!mantra) {
     return (
       <div className="min-h-screen bg-background">
+        <SEO
+          title="Mantra Not Found - Sanatani Gyan"
+          description="The requested mantra was not found. Explore our collection of sacred Hindu mantras and chants."
+          url={`https://sanatanigyan.netlify.app/mantra/${id}`}
+          noindex={true}
+        />
         <Navbar />
         <div className="container mx-auto px-4 py-8 text-center">
           <h1 className="text-2xl font-bold mb-4">Mantra not found</h1>
@@ -130,8 +138,23 @@ export default function MantraDetail() {
     );
   }
 
+  const mantraStructuredData = createMantraStructuredData(mantra);
+  const breadcrumbData = breadcrumbStructuredData([
+    { name: "Home", url: "https://sanatanigyan.netlify.app/" },
+    { name: "Mantras", url: "https://sanatanigyan.netlify.app/mantras" },
+    { name: mantra.title, url: `https://sanatanigyan.netlify.app/mantra/${mantra.id}` }
+  ]);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={`${mantra.title} - ${mantra.deity} Mantra | Sanatani Gyan`}
+        description={`Sacred ${mantra.deity} mantra: ${mantra.title}. Learn the meaning, pronunciation and spiritual benefits of this powerful Sanskrit chant.`}
+        keywords={`${mantra.deity} mantra, ${mantra.title}, Sanskrit chant, Hindu prayer, spiritual mantra, meditation chant, ${mantra.category}`}
+        url={`https://sanatanigyan.netlify.app/mantra/${mantra.id}`}
+        type="article"
+        structuredData={[mantraStructuredData, breadcrumbData]}
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">

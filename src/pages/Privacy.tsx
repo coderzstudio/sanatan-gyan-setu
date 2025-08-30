@@ -1,10 +1,24 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
+import { breadcrumbStructuredData } from "@/utils/seoData";
 
 export default function Privacy() {
+  const breadcrumbData = breadcrumbStructuredData([
+    { name: "Home", url: "https://sanatanigyan.netlify.app/" },
+    { name: "Privacy Policy", url: "https://sanatanigyan.netlify.app/privacy" }
+  ]);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Privacy Policy - Data Protection & User Rights | Sanatani Gyan"
+        description="Learn how Sanatani Gyan protects your privacy and personal data. Read our comprehensive privacy policy covering data collection, usage, and your rights."
+        keywords="privacy policy, data protection, user privacy, personal information, data security, GDPR compliance"
+        url="https://sanatanigyan.netlify.app/privacy"
+        structuredData={breadcrumbData}
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-12">

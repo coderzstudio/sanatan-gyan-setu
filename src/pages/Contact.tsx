@@ -9,6 +9,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import { breadcrumbStructuredData, organizationStructuredData } from "@/utils/seoData";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -19,6 +21,11 @@ export default function Contact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  const breadcrumbData = breadcrumbStructuredData([
+    { name: "Home", url: "https://sanatanigyan.netlify.app/" },
+    { name: "Contact", url: "https://sanatanigyan.netlify.app/contact" }
+  ]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +70,13 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Contact Us - Get in Touch | Sanatani Gyan"
+        description="Contact Sanatani Gyan for questions about Hindu scriptures, mantras, or our spiritual platform. Email us at sanatanigyann@gmail.com or call +91-98765-43210."
+        keywords="contact sanatani gyan, Hindu spiritual support, religious questions, mantra help, scripture support, spiritual guidance contact"
+        url="https://sanatanigyan.netlify.app/contact"
+        structuredData={[breadcrumbData, organizationStructuredData]}
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-12">

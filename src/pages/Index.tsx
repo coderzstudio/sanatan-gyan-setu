@@ -7,9 +7,11 @@ import { BookOpen, ArrowRight, Loader2, Users, Globe, Shield, Share2 } from "luc
 import HeroSlider from "@/components/HeroSlider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import defaultBookImage from "@/assets/default-book.jpg";
 import { dataService } from "@/utils/dataService";
 import { cache } from "@/utils/cache";
+import { websiteStructuredData, organizationStructuredData, faqStructuredData } from "@/utils/seoData";
 
 interface Book {
   id: string;
@@ -89,8 +91,21 @@ export default function Index() {
     );
   }
 
+  const combinedStructuredData = [
+    websiteStructuredData,
+    organizationStructuredData,
+    faqStructuredData
+  ];
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Sanatani Gyan - Sacred Hindu Scriptures, Mantras & Spiritual Wisdom"
+        description="Discover authentic Hindu scriptures, divine mantras, Vedic texts, and spiritual wisdom. Free access to Bhagavad Gita, Vedas, Upanishads, and sacred knowledge in 8+ languages."
+        keywords="Hindu scriptures, Vedic texts, mantras, Bhagavad Gita, Vedas, Upanishads, spiritual wisdom, Sanskrit, Hindu philosophy, dharma, meditation, prayer, sacred texts, religious books, free Hindu books"
+        url="https://sanatanigyan.netlify.app/"
+        structuredData={combinedStructuredData}
+      />
       <Navbar />
       
       {/* Hero Section */}

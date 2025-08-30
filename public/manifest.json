@@ -1,0 +1,30 @@
+{
+  "name": "Sanatani Gyan - Sacred Hindu Scriptures & Mantras",
+  "short_name": "Sanatani Gyan",
+  "description": "Discover authentic Hindu scriptures, divine mantras, Vedic texts, and spiritual wisdom. Free access to Bhagavad Gita, Vedas, Upanishads in 8+ languages.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff6b35",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-IN",
+  "categories": ["education", "lifestyle", "books"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/logo-192.png", 
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo-512.png",
+      "sizes": "512x512", 
+      "type": "image/png"
+    }
+  ]
+}

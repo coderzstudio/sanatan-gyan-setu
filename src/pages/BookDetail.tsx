@@ -6,8 +6,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, Loader2, ExternalLink } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { dataService } from "@/utils/dataService";
 import { cache } from "@/utils/cache";
+import { createBookStructuredData, breadcrumbStructuredData } from "@/utils/seoData";
 
 interface Book {
   id: string;
@@ -189,6 +191,12 @@ export default function BookDetail() {
   if (!book) {
     return (
       <div className="min-h-screen bg-background">
+        <SEO
+          title="Book Not Found - Sanatani Gyan"
+          description="The requested book was not found. Browse our collection of Hindu scriptures and sacred texts."
+          url={`https://sanatanigyan.netlify.app/book/${id}`}
+          noindex={true}
+        />
         <Navbar />
         <div className="container mx-auto px-4 py-8 text-center">
           <h1 className="text-2xl font-bold mb-4">Book not found</h1>
@@ -204,8 +212,24 @@ export default function BookDetail() {
     );
   }
 
+  const bookStructuredData = createBookStructuredData(book);
+  const breadcrumbData = breadcrumbStructuredData([
+    { name: "Home", url: "https://sanatanigyan.netlify.app/" },
+    { name: "Shastras", url: "https://sanatanigyan.netlify.app/books" },
+    { name: book.title, url: `https://sanatanigyan.netlify.app/book/${book.id}` }
+  ]);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={`${book.title} - Hindu Scripture | Sanatani Gyan`}
+        description={book.description || `Read ${book.title} - authentic Hindu scripture in ${book.language}. Free access to sacred religious text with original content and translations.`}
+        keywords={`${book.title}, Hindu scripture, ${book.language} book, religious text, ${book.category?.name}, spiritual literature, free Hindu books, Vedic literature`}
+        url={`https://sanatanigyan.netlify.app/book/${book.id}`}
+        image={book.image_url}
+        type="book"
+        structuredData={[bookStructuredData, breadcrumbData]}
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
