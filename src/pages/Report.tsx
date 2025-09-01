@@ -5,13 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, CheckCircle, Send } from "lucide-react";
+import { AlertCircle, CheckCircle, Send, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
 import { breadcrumbStructuredData } from "@/utils/seoData";
+import { 
+  validateReportForm, 
+  sanitizeFormData, 
+  checkRateLimit, 
+  logSecurityEvent 
+} from "@/utils/security";
 
 const issueTypes = [
   { value: "copyright", label: "Copyright Infringement" },
@@ -31,6 +37,7 @@ export default function Report() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
   const { toast } = useToast();
 
   const breadcrumbData = breadcrumbStructuredData([
@@ -49,26 +56,52 @@ export default function Report() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.name || !formData.email || !formData.issue_type || !formData.message) {
+    setValidationErrors({});
+
+    // Client-side validation
+    const validation = validateReportForm(formData);
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
+        title: "Validation Error",
+        description: "Please fix the errors below and try again.",
         variant: "destructive",
       });
+      return;
+    }
+
+    // Rate limiting check
+    const canProceed = await checkRateLimit('report_form');
+    if (!canProceed) {
+      toast({
+        title: "Rate Limited",
+        description: "Too many submissions. Please wait 15 minutes before trying again.",
+        variant: "destructive",
+      });
+      await logSecurityEvent('rate_limit_exceeded', { action: 'report_form' });
       return;
     }
 
     setIsSubmitting(true);
 
     try {
+      // Sanitize form data
+      const sanitizedData = sanitizeFormData(formData);
+
       const { error } = await supabase
         .from("reports")
-        .insert([formData]);
+        .insert([sanitizedData]);
 
       if (error) {
         throw error;
       }
+
+      // Log successful submission
+      await logSecurityEvent('form_submitted', { 
+        type: 'report_form',
+        issue_type: sanitizedData.issue_type,
+        email: sanitizedData.email.slice(0, 5) + '***' // Partially masked for privacy
+      });
 
       setIsSubmitted(true);
       toast({
@@ -83,8 +116,16 @@ export default function Report() {
         issue_type: "",
         message: "",
       });
+      setValidationErrors({});
     } catch (error) {
       console.error("Error submitting report:", error);
+      
+      // Log the error for security monitoring
+      await logSecurityEvent('form_submission_error', { 
+        type: 'report_form',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      
       toast({
         title: "Submission Failed",
         description: "There was an error submitting your report. Please try again.",
@@ -180,7 +221,14 @@ export default function Report() {
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     placeholder="Enter your full name"
                     required
+                    className={validationErrors.name ? "border-red-500" : ""}
                   />
+                  {validationErrors.name && (
+                    <p className="text-sm text-red-600 flex items-center mt-1">
+                      <AlertTriangle className="h-4 w-4 mr-1" />
+                      {validationErrors.name}
+                    </p>
+                  )}
                 </div>
 
                 {/* Email */}
@@ -195,7 +243,14 @@ export default function Report() {
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     placeholder="Enter your email address"
                     required
+                    className={validationErrors.email ? "border-red-500" : ""}
                   />
+                  {validationErrors.email && (
+                    <p className="text-sm text-red-600 flex items-center mt-1">
+                      <AlertTriangle className="h-4 w-4 mr-1" />
+                      {validationErrors.email}
+                    </p>
+                  )}
                 </div>
 
                 {/* Issue Type */}
@@ -207,7 +262,7 @@ export default function Report() {
                     value={formData.issue_type}
                     onValueChange={(value) => handleInputChange("issue_type", value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={validationErrors.issue_type ? "border-red-500" : ""}>
                       <SelectValue placeholder="Select the type of issue" />
                     </SelectTrigger>
                     <SelectContent>
@@ -218,6 +273,12 @@ export default function Report() {
                       ))}
                     </SelectContent>
                   </Select>
+                  {validationErrors.issue_type && (
+                    <p className="text-sm text-red-600 flex items-center mt-1">
+                      <AlertTriangle className="h-4 w-4 mr-1" />
+                      {validationErrors.issue_type}
+                    </p>
+                  )}
                 </div>
 
                 {/* Message */}
@@ -232,7 +293,14 @@ export default function Report() {
                     placeholder="Please provide detailed information about your issue or feedback..."
                     rows={6}
                     required
+                    className={validationErrors.message ? "border-red-500" : ""}
                   />
+                  {validationErrors.message && (
+                    <p className="text-sm text-red-600 flex items-center mt-1">
+                      <AlertTriangle className="h-4 w-4 mr-1" />
+                      {validationErrors.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Guidelines */}

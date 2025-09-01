@@ -4,13 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Send, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { breadcrumbStructuredData, organizationStructuredData } from "@/utils/seoData";
+import { 
+  validateContactForm, 
+  sanitizeFormData, 
+  checkRateLimit, 
+  logSecurityEvent 
+} from "@/utils/security";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -20,6 +26,7 @@ export default function Contact() {
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
   const { toast } = useToast();
 
   const breadcrumbData = breadcrumbStructuredData([
@@ -29,19 +36,49 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationErrors({});
+
+    // Client-side validation
+    const validation = validateContactForm(formData);
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      toast({
+        title: "Validation Error",
+        description: "Please fix the errors below and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Rate limiting check
+    const canProceed = await checkRateLimit('contact_form');
+    if (!canProceed) {
+      toast({
+        title: "Rate Limited",
+        description: "Too many submissions. Please wait 15 minutes before trying again.",
+        variant: "destructive",
+      });
+      await logSecurityEvent('rate_limit_exceeded', { action: 'contact_form' });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      // Sanitize form data
+      const sanitizedData = sanitizeFormData(formData);
+
       const { error } = await supabase
         .from('contact_messages')
-        .insert([{
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message
-        }]);
+        .insert([sanitizedData]);
 
       if (error) throw error;
+      
+      // Log successful submission
+      await logSecurityEvent('form_submitted', { 
+        type: 'contact_form',
+        email: sanitizedData.email.slice(0, 5) + '***' // Partially masked for privacy
+      });
       
       toast({
         title: "Message sent!",
@@ -49,8 +86,16 @@ export default function Contact() {
       });
       
       setFormData({ name: "", email: "", subject: "", message: "" });
+      setValidationErrors({});
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      // Log the error for security monitoring
+      await logSecurityEvent('form_submission_error', { 
+        type: 'contact_form',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",
@@ -152,7 +197,14 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       placeholder="Your name"
+                      className={validationErrors.name ? "border-red-500" : ""}
                     />
+                    {validationErrors.name && (
+                      <p className="text-sm text-red-600 flex items-center">
+                        <AlertTriangle className="h-4 w-4 mr-1" />
+                        {validationErrors.name}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
@@ -164,7 +216,14 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       placeholder="your@email.com"
+                      className={validationErrors.email ? "border-red-500" : ""}
                     />
+                    {validationErrors.email && (
+                      <p className="text-sm text-red-600 flex items-center">
+                        <AlertTriangle className="h-4 w-4 mr-1" />
+                        {validationErrors.email}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -177,7 +236,14 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     placeholder="Message subject"
+                    className={validationErrors.subject ? "border-red-500" : ""}
                   />
+                  {validationErrors.subject && (
+                    <p className="text-sm text-red-600 flex items-center">
+                      <AlertTriangle className="h-4 w-4 mr-1" />
+                      {validationErrors.subject}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -190,7 +256,14 @@ export default function Contact() {
                     required
                     placeholder="Your message..."
                     rows={5}
+                    className={validationErrors.message ? "border-red-500" : ""}
                   />
+                  {validationErrors.message && (
+                    <p className="text-sm text-red-600 flex items-center">
+                      <AlertTriangle className="h-4 w-4 mr-1" />
+                      {validationErrors.message}
+                    </p>
+                  )}
                 </div>
 
                 <Button
