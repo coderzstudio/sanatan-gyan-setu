@@ -70,6 +70,20 @@ export default function AboutUs() {
           </Card>
         </div>
 
+         {/* Vision */}
+          <Card className="card-divine">
+            <CardContent className="p-8">
+              <div className="flex items-center mb-6">
+                <Eye className="h-8 w-8 text-primary mr-3" />
+                <h2 className="text-2xl font-bold text-primary">Founder</h2>
+              </div>
+              <p className="text-muted-foreground leading-relaxed text-lg">
+                My name is Kuldeep Malviya, I am 21 years old, and currently pursuing a Bachelor of Computer Applications (BCA). The purpose of creating this website is simple yet deeply meaningful — to make all the sacred scriptures of Sanatan Dharma freely accessible to everyone. Even in today’s digital age, many people either don't have access to our ancient scriptures or find them scattered and difficult to understand. This platform is my humble effort to ensure that anyone — whether a student, seeker, or curious mind — can access authentic Sanatan knowledge in a simple, pure, and organized manner. Here, you will find PDFs, explanations, meanings of shlokas, audiobooks, and many more resources — all in one place, and completely free of cost.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Values */}
         <Card className="card-sacred mb-12">
           <CardContent className="p-8">
